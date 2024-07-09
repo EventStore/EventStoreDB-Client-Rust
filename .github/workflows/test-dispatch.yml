@@ -3,6 +3,11 @@ name: "Dispatch"
 on:
   workflow_dispatch:
     inputs:
+      runtime_env:
+        description: The runtime environment. release, staging or enterprise
+        type: string
+        default: release
+
       version:
         description: "Version tag"
         required: true
@@ -14,4 +19,5 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       esdb_version: ${{ inputs.version }}
+      runtime_env: ${{ inputs.runtime_env }}
     secrets: inherit

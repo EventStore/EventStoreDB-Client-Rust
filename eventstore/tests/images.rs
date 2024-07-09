@@ -3,12 +3,16 @@
 use std::collections::HashMap;
 use testcontainers::{core::WaitFor, Image};
 
-const CONTAINER_IDENTIFIER: &str = "docker.eventstore.com/eventstore-ce/eventstoredb-ce";
+const REGISTRY: &str = "docker.eventstore.com";
+const DEFAULT_REPO: &str = "eventstore-ce";
+const DEFAULT_CONTAINER: &str = "eventstoredb-ce";
 const DEFAULT_TAG: &str = "latest";
 
 #[derive(Debug, Clone)]
 pub struct ESDB {
     tag: String,
+    repo: String,
+    container: String,
     env_vars: HashMap<String, String>,
     vol_vars: HashMap<String, String>,
 }
@@ -107,7 +111,7 @@ impl Image for ESDB {
     type Args = ();
 
     fn name(&self) -> String {
-        CONTAINER_IDENTIFIER.to_string()
+        format!("{}/{}/{}", REGISTRY, self.repo, self.container)
     }
 
     fn tag(&self) -> String {
@@ -133,7 +137,9 @@ impl Image for ESDB {
 
 impl Default for ESDB {
     fn default() -> Self {
-        let tag = option_env!("CONTAINER_IMAGE_VERSION").unwrap_or(DEFAULT_TAG);
+        let tag = option_env!("ESDB_DOCKER_CONTAINER_VERSION").unwrap_or(DEFAULT_TAG);
+        let repo = option_env!("ESDB_DOCKER_REPO").unwrap_or(DEFAULT_REPO);
+        let container = option_env!("ESDB_DOCKER_CONTAINER").unwrap_or(DEFAULT_CONTAINER);
         let mut env_vars = HashMap::new();
 
         env_vars.insert(
@@ -143,6 +149,8 @@ impl Default for ESDB {
 
         ESDB {
             tag: tag.to_string(),
+            repo: repo.to_string(),
+            container: container.to_string(),
             env_vars,
             vol_vars: HashMap::new(),
         }

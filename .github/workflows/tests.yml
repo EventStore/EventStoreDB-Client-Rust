@@ -3,6 +3,10 @@ name: tests workflow
 on:
   workflow_call:
     inputs:
+      runtime_env:
+        type: string
+        default: release
+
       esdb_version:
         required: true
         type: string
@@ -11,7 +15,13 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  provide_docker:
+    uses: ./.github/workflows/docker-repo.yml
+    with:
+      runtime_env: ${{ inputs.runtime_env }}
+
   single_node:
+    needs: provide_docker
     name: Single node
 
     strategy:
@@ -30,7 +40,9 @@ jobs:
         run: cargo test --package eventstore --test integration single_node_${{ matrix.test }}
         continue-on-error: ${{ matrix.test == 'auto_resub_on_connection_drop' }}
         env:
-          CONTAINER_IMAGE_VERSION: ${{ inputs.esdb_version }}
+          ESDB_DOCKER_REPO: ${{ needs.provide_docker.outputs.docker_repo }}
+          ESDB_DOCKER_CONTAINER: ${{ needs.provide_docker.outputs.docker_container }}
+          ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
           RUST_LOG: integration=debug,eventstore=debug
           RUST_BACKTRACE: 1
 
@@ -41,6 +53,7 @@ jobs:
           path: eventstore/esdb_logs
 
   secure:
+    needs: provide_docker
     name: Secure
 
     strategy:
@@ -61,7 +74,9 @@ jobs:
       - name: Run test
         run: cargo test --package eventstore --test integration single_node_${{ matrix.test }}
         env:
-          CONTAINER_IMAGE_VERSION: ${{ inputs.esdb_version }}
+          ESDB_DOCKER_REPO: ${{ needs.provide_docker.outputs.docker_repo }}
+          ESDB_DOCKER_CONTAINER: ${{ needs.provide_docker.outputs.docker_container }}
+          ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
           RUST_LOG: integration=debug,eventstore=debug
           RUST_BACKTRACE: 1
           SECURE: true
@@ -73,6 +88,7 @@ jobs:
           path: eventstore/esdb_logs
 
   cluster:
+    needs: provide_docker
     name: Cluster
 
     strategy:
@@ -90,12 +106,14 @@ jobs:
       - name: Set up cluster with Docker Compose
         run: docker-compose up -d
         env:
-          CONTAINER_IMAGE_VERSION: ${{ inputs.esdb_version }}
+          ESDB_DOCKER_REPO: ${{ needs.provide_docker.outputs.docker_repo }}
+          ESDB_DOCKER_CONTAINER: ${{ needs.provide_docker.outputs.docker_container }}
+          ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
 
       - name: Run test
         run: cargo test --package eventstore --test integration cluster_${{ matrix.test }}
         env:
-          CONTAINER_IMAGE_VERSION: ${{ inputs.esdb_version }}
+          ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
           RUST_LOG: integration=debug,eventstore=debug
           RUST_BACKTRACE: 1
 

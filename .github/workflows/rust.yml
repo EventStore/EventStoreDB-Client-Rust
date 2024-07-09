@@ -15,19 +15,19 @@ jobs:
     name: Build
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2019, macos-11]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         rust: [stable, beta, nightly]
         exclude:
-          - os: windows-2019
+          - os: windows-latest
             rust: beta
 
-          - os: windows-2019
+          - os: windows-latest
             rust: nightly
 
-          - os: macos-11
+          - os: macos-latest
             rust: beta
 
-          - os: macos-11
+          - os: macos-latest
             rust: nightly
 
 
