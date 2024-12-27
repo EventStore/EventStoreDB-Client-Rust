@@ -1,15 +1,15 @@
 [package]
 authors = ["Yorick Laupa <yo.eight@gmail.com>"]
 edition = "2021"
-name = "eventstore"
-version = "3.0.0"
+name = "kurrent"
+version = "1.0.0"
 
 # Uncomment if you want to update messages.rs code-gen.
 # We disabled codegen.rs because it requires having `protoc` installed on your machine
 # in order to build that library.
 # build = "codegen.rs"
 
-description = "Official EventStoreDB gRPC client"
+description = "Official KurrentDB gRPC client"
 keywords = ["database", "eventsourcing", "eventstore", "eventstoredb", "grpc"]
 license = "MIT"
 readme = "../README.md"

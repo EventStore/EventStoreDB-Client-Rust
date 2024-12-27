@@ -1,12 +1,12 @@
-use eventstore::operations;
-use eventstore::operations::StatsOptions;
+use kurrent::operations;
+use kurrent::operations::StatsOptions;
 use std::time::Duration;
 
 fn generate_login(names: &mut names::Generator<'_>) -> String {
     names.next().unwrap().replace("-", "_")
 }
 
-async fn test_gossip(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_gossip(client: &operations::Client) -> kurrent::Result<()> {
     let gossip = client.read_gossip().await?;
 
     assert!(gossip.len() > 0);
@@ -14,7 +14,7 @@ async fn test_gossip(client: &operations::Client) -> eventstore::Result<()> {
     Ok(())
 }
 
-async fn test_stats(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_stats(client: &operations::Client) -> kurrent::Result<()> {
     let options = StatsOptions::default().refresh_time(Duration::from_millis(500));
 
     let mut stream = client.stats(&options).await?;
@@ -27,7 +27,7 @@ async fn test_stats(client: &operations::Client) -> eventstore::Result<()> {
 async fn test_create_user(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     client
         .create_user(
             generate_login(names),
@@ -44,7 +44,7 @@ async fn test_create_user(
 async fn test_update_user(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -73,7 +73,7 @@ async fn test_update_user(
 async fn test_delete_user(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -96,7 +96,7 @@ async fn test_delete_user(
 async fn test_enable_user(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -119,7 +119,7 @@ async fn test_enable_user(
 async fn test_disable_user(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -146,7 +146,7 @@ async fn test_disable_user(
 async fn test_user_details(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -171,7 +171,7 @@ async fn test_user_details(
 async fn test_change_user_password(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
     let password = names.next().unwrap();
 
@@ -200,7 +200,7 @@ async fn test_change_user_password(
 async fn test_reset_user_password(
     client: &operations::Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let login = generate_login(names);
 
     client
@@ -220,27 +220,27 @@ async fn test_reset_user_password(
     Ok(())
 }
 
-async fn test_merge_indexes(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_merge_indexes(client: &operations::Client) -> kurrent::Result<()> {
     client.merge_indexes(&Default::default()).await
 }
 
-async fn test_resign_node(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_resign_node(client: &operations::Client) -> kurrent::Result<()> {
     client.resign_node(&Default::default()).await
 }
 
-async fn test_set_node_priority(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_set_node_priority(client: &operations::Client) -> kurrent::Result<()> {
     client.set_node_priority(1, &Default::default()).await
 }
 
 async fn test_op_restart_persistent_subscription_subsystem(
     client: &operations::Client,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     client
         .restart_persistent_subscriptions(&Default::default())
         .await
 }
 
-async fn test_scavenge(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_scavenge(client: &operations::Client) -> kurrent::Result<()> {
     let result = client.start_scavenge(1, 0, &Default::default()).await?;
     let result = client.stop_scavenge(result.id(), &Default::default()).await;
 
@@ -249,11 +249,11 @@ async fn test_scavenge(client: &operations::Client) -> eventstore::Result<()> {
     Ok(())
 }
 
-async fn test_shutdown(client: &operations::Client) -> eventstore::Result<()> {
+async fn test_shutdown(client: &operations::Client) -> kurrent::Result<()> {
     client.shutdown(&Default::default()).await
 }
 
-pub async fn tests(client: eventstore::Client) -> eyre::Result<()> {
+pub async fn tests(client: kurrent::Client) -> eyre::Result<()> {
     let mut gen = names::Generator::default();
     let gen = &mut gen;
     let client: operations::Client = client.into();

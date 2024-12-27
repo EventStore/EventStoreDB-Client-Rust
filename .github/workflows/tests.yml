@@ -37,7 +37,7 @@ jobs:
         run: rustup update stable
 
       - name: Run test
-        run: cargo test --package eventstore --test integration single_node_${{ matrix.test }}
+        run: cargo test --package kurrent --test integration single_node_${{ matrix.test }}
         continue-on-error: ${{ matrix.test == 'auto_resub_on_connection_drop' }}
         env:
           ESDB_DOCKER_REPO: ${{ needs.provide_docker.outputs.docker_repo }}
@@ -72,7 +72,7 @@ jobs:
         run: docker compose --file configure-tls-for-tests.yml up
 
       - name: Run test
-        run: cargo test --package eventstore --test integration single_node_${{ matrix.test }}
+        run: cargo test --package kurrent --test integration single_node_${{ matrix.test }}
         env:
           ESDB_DOCKER_REPO: ${{ needs.provide_docker.outputs.docker_repo }}
           ESDB_DOCKER_CONTAINER: ${{ needs.provide_docker.outputs.docker_container }}
@@ -111,7 +111,7 @@ jobs:
           ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
 
       - name: Run test
-        run: cargo test --package eventstore --test integration cluster_${{ matrix.test }}
+        run: cargo test --package kurrent --test integration cluster_${{ matrix.test }}
         env:
           ESDB_DOCKER_CONTAINER_VERSION: ${{ inputs.esdb_version }}
           RUST_LOG: integration=debug,eventstore=debug

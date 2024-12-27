@@ -21,9 +21,9 @@ use crate::{
 };
 
 /// Represents a client to a single node. `Client` maintains a full duplex
-/// communication to EventStoreDB.
+/// communication to KurrentDB.
 ///
-/// Many threads can use an EventStoreDB client at the same time
+/// Many threads can use an KurrentDB client at the same time
 /// or a single thread can make many asynchronous requests.
 #[derive(Clone)]
 pub struct Client {
@@ -32,12 +32,12 @@ pub struct Client {
 }
 
 impl Client {
-    /// Creates a gRPC client to an EventStoreDB database.
+    /// Creates a gRPC client to an KurrentDB database.
     pub fn new(settings: ClientSettings) -> crate::Result<Self> {
         Client::with_runtime_handle(tokio::runtime::Handle::current(), settings)
     }
 
-    /// Creates a gRPC client to an EventStoreDB database using an existing tokio runtime.
+    /// Creates a gRPC client to an KurrentDB database using an existing tokio runtime.
     pub fn with_runtime_handle(
         handle: tokio::runtime::Handle,
         settings: ClientSettings,

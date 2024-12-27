@@ -1,12 +1,12 @@
 use crate::common::{fresh_stream_id, generate_events};
-use eventstore::{Client, StreamPosition};
+use kurrent::{Client, StreamPosition};
 use std::time::Duration;
 
-async fn test_create_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn test_create_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     let stream_id = fresh_stream_id("create_persistent_sub");
 
     let options =
-        eventstore::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
     client
         .create_persistent_subscription(stream_id, "a_group_name", &options)
         .await?;
@@ -17,10 +17,10 @@ async fn test_create_persistent_subscription(client: &Client) -> eventstore::Res
 async fn test_create_persistent_subscription_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let group_name = names.next().unwrap();
     let options =
-        eventstore::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
 
     client
         .create_persistent_subscription_to_all(group_name, &options)
@@ -30,11 +30,11 @@ async fn test_create_persistent_subscription_to_all(
 }
 
 // We test we can successfully update a persistent subscription.
-async fn test_update_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn test_update_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     let stream_id = fresh_stream_id("update_persistent_sub");
 
     let mut options =
-        eventstore::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
 
     client
         .create_persistent_subscription(stream_id.as_str(), "a_group_name", &options)
@@ -52,11 +52,11 @@ async fn test_update_persistent_subscription(client: &Client) -> eventstore::Res
 async fn test_update_persistent_subscription_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let group_name = names.next().unwrap();
 
     let mut options =
-        eventstore::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
 
     client
         .create_persistent_subscription_to_all(group_name.as_str(), &options)
@@ -72,17 +72,17 @@ async fn test_update_persistent_subscription_to_all(
 }
 
 // We test we can successfully delete a persistent subscription.
-async fn test_delete_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn test_delete_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     let stream_id = fresh_stream_id("delete_persistent_sub");
     let options =
-        eventstore::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
 
     client
         .create_persistent_subscription(stream_id.as_str(), "a_group_name", &options)
         .await?;
 
     let options =
-        eventstore::DeletePersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
+        kurrent::DeletePersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
 
     client
         .delete_persistent_subscription(stream_id, "a_group_name", &options)
@@ -94,17 +94,17 @@ async fn test_delete_persistent_subscription(client: &Client) -> eventstore::Res
 async fn test_delete_persistent_subscription_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let group_name = names.next().unwrap();
     let options =
-        eventstore::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
+        kurrent::PersistentSubscriptionToAllOptions::default().deadline(Duration::from_secs(2));
 
     client
         .create_persistent_subscription_to_all(group_name.as_str(), &options)
         .await?;
 
     let options =
-        eventstore::DeletePersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
+        kurrent::DeletePersistentSubscriptionOptions::default().deadline(Duration::from_secs(2));
 
     client
         .delete_persistent_subscription_to_all(group_name.as_str(), &options)
@@ -113,7 +113,7 @@ async fn test_delete_persistent_subscription_to_all(
     Ok(())
 }
 
-async fn test_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn test_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     let stream_id = fresh_stream_id("persistent_subscription");
     let events = generate_events("persistent-subscription-test".to_string(), 5);
 
@@ -148,7 +148,7 @@ async fn test_persistent_subscription(client: &Client) -> eventstore::Result<()>
             }
         }
 
-        Ok::<usize, eventstore::Error>(count)
+        Ok::<usize, kurrent::Error>(count)
     });
 
     let events = generate_events("es6-persistent-subscription-test".to_string(), 5);
@@ -159,7 +159,7 @@ async fn test_persistent_subscription(client: &Client) -> eventstore::Result<()>
     let count = handle
         .await
         .map_err(|_| {
-            eventstore::Error::IllegalStateError(
+            kurrent::Error::IllegalStateError(
                 "Error when joining the tokio thread handle".to_string(),
             )
         })
@@ -177,11 +177,11 @@ async fn test_persistent_subscription(client: &Client) -> eventstore::Result<()>
 async fn test_persistent_subscription_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let group_name = names.next().unwrap();
 
-    let options = eventstore::PersistentSubscriptionToAllOptions::default()
-        .start_from(eventstore::StreamPosition::Start);
+    let options = kurrent::PersistentSubscriptionToAllOptions::default()
+        .start_from(kurrent::StreamPosition::Start);
 
     client
         .create_persistent_subscription_to_all(group_name.as_str(), &options)
@@ -205,7 +205,7 @@ async fn test_persistent_subscription_to_all(
             }
         }
 
-        Ok::<_, eventstore::Error>(count)
+        Ok::<_, kurrent::Error>(count)
     })
     .await;
 
@@ -222,7 +222,7 @@ async fn test_persistent_subscription_to_all(
 async fn test_list_persistent_subscriptions(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let mut count = 0;
     let group_name = "group_name";
     let mut expected_set = std::collections::HashSet::new();
@@ -259,7 +259,7 @@ async fn test_list_persistent_subscriptions(
 async fn test_list_persistent_subscriptions_for_stream(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let mut count = 0;
     let stream_name = names.next().unwrap();
     let mut expected_set = std::collections::HashSet::new();
@@ -304,7 +304,7 @@ async fn test_list_persistent_subscriptions_for_stream(
 async fn test_list_persistent_subscriptions_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let mut count = 0;
     let mut expected_set = std::collections::HashSet::new();
 
@@ -340,7 +340,7 @@ async fn test_list_persistent_subscriptions_to_all(
 async fn test_get_persistent_subscription_info(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let stream_name = names.next().unwrap();
     let group_name = names.next().unwrap();
 
@@ -373,7 +373,7 @@ async fn test_get_persistent_subscription_info(
 async fn test_get_persistent_subscription_info_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let group_name = names.next().unwrap();
 
     client
@@ -396,7 +396,7 @@ async fn test_get_persistent_subscription_info_to_all(
 async fn test_replay_parked_messages(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let stream_name = names.next().unwrap();
     let group_name = names.next().unwrap();
     let event_count = 2;
@@ -427,7 +427,7 @@ async fn test_replay_parked_messages(
         for _ in 0..event_count {
             let event = sub.next().await?;
 
-            sub.nack(event, eventstore::NakAction::Park, "because reasons")
+            sub.nack(event, kurrent::NakAction::Park, "because reasons")
                 .await?;
         }
 
@@ -448,7 +448,7 @@ async fn test_replay_parked_messages(
             sub.ack(event).await?;
         }
 
-        Ok::<(), eventstore::Error>(())
+        Ok::<(), kurrent::Error>(())
     })
     .await;
 
@@ -465,7 +465,7 @@ async fn test_replay_parked_messages(
 async fn test_replay_parked_messages_to_all(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let stream_name = names.next().unwrap();
     let group_name = names.next().unwrap();
     let event_count = 2;
@@ -490,7 +490,7 @@ async fn test_replay_parked_messages_to_all(
             let event = sub.next().await?;
 
             if event.get_original_stream_id() == stream_name.as_str() {
-                sub.nack(event, eventstore::NakAction::Park, "because reasons")
+                sub.nack(event, kurrent::NakAction::Park, "because reasons")
                     .await?;
 
                 count += 1;
@@ -529,7 +529,7 @@ async fn test_replay_parked_messages_to_all(
             }
         }
 
-        Ok::<(), eventstore::Error>(())
+        Ok::<(), kurrent::Error>(())
     })
     .await;
 
@@ -543,7 +543,7 @@ async fn test_replay_parked_messages_to_all(
     }
 }
 
-async fn test_restart_persistent_subscription_subsystem(client: &Client) -> eventstore::Result<()> {
+async fn test_restart_persistent_subscription_subsystem(client: &Client) -> kurrent::Result<()> {
     client
         .restart_persistent_subscription_subsystem(&Default::default())
         .await
@@ -552,7 +552,7 @@ async fn test_restart_persistent_subscription_subsystem(client: &Client) -> even
 async fn test_persistent_subscription_encoding(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let stream_name = format!("/{}/foo", names.next().unwrap());
     let group_name = format!("/{}/foo", names.next().unwrap());
 
@@ -588,7 +588,7 @@ async fn test_persistent_subscription_encoding(
 async fn test_persistent_subscription_info_with_connection_details(
     client: &Client,
     names: &mut names::Generator<'_>,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     let stream_name = names.next().unwrap();
     let group_name = names.next().unwrap();
 
@@ -610,7 +610,7 @@ async fn test_persistent_subscription_info_with_connection_details(
 
     let client2 = client.clone();
     let stream_name_2 = stream_name.clone();
-    let append_handle: tokio::task::JoinHandle<eventstore::Result<()>> = tokio::spawn(async move {
+    let append_handle: tokio::task::JoinHandle<kurrent::Result<()>> = tokio::spawn(async move {
         loop {
             let event = generate_events("foobar", 1);
             let _ = client2
@@ -621,7 +621,7 @@ async fn test_persistent_subscription_info_with_connection_details(
         }
     });
 
-    let ack_handle: tokio::task::JoinHandle<eventstore::Result<()>> = tokio::spawn(async move {
+    let ack_handle: tokio::task::JoinHandle<kurrent::Result<()>> = tokio::spawn(async move {
         loop {
             let event = sub.next().await?;
             sub.ack(event).await?;
@@ -659,7 +659,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_create_persistent_subscription_to_all");
     if let Err(e) = test_create_persistent_subscription_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -671,7 +671,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_update_persistent_subscription_to_all");
     if let Err(e) = test_update_persistent_subscription_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -686,7 +686,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_delete_persistent_subscription_to_all");
     if let Err(e) = test_delete_persistent_subscription_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -701,7 +701,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_persistent_subscription_to_all");
     if let Err(e) = test_persistent_subscription_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -719,7 +719,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_list_persistent_subscriptions_to_all...");
     if let Err(e) = test_list_persistent_subscriptions_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -735,7 +735,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Before test_get_persistent_subscription_info_to_all...");
     if let Err(e) = test_get_persistent_subscription_info_to_all(&client, &mut name_generator).await
     {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );
@@ -750,7 +750,7 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
     debug!("Complete");
     debug!("Before test_replay_parked_messages_to_all...");
     if let Err(e) = test_replay_parked_messages_to_all(&client, &mut name_generator).await {
-        if let eventstore::Error::UnsupportedFeature = e {
+        if let kurrent::Error::UnsupportedFeature = e {
             warn!(
                 "Persistent subscription to $all is not supported on the server we are targeting"
             );

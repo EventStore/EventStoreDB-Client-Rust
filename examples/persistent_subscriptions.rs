@@ -3,12 +3,12 @@
 #![allow(unused_results)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
-use eventstore::{
+use kurrent::{
     Client, PersistentSubscriptionEvent, PersistentSubscriptionOptions,
     PersistentSubscriptionToAllOptions, ReplayParkedMessagesOptions, SubscriptionFilter,
 };
 
-async fn create_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn create_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     // #region create-persistent-subscription-to-stream
     client
         .create_persistent_subscription("test-stream", "subscription-group", &Default::default())
@@ -18,7 +18,7 @@ async fn create_persistent_subscription(client: &Client) -> eventstore::Result<(
     Ok(())
 }
 
-async fn connect_to_persistent_subscription_to_stream(client: &Client) -> eventstore::Result<()> {
+async fn connect_to_persistent_subscription_to_stream(client: &Client) -> kurrent::Result<()> {
     // #region subscribe-to-persistent-subscription-to-stream
     let mut sub = client
         .subscribe_to_persistent_subscription(
@@ -36,7 +36,7 @@ async fn connect_to_persistent_subscription_to_stream(client: &Client) -> events
     // #endregion subscribe-to-persistent-subscription-to-stream
 }
 
-async fn connect_to_persistent_subscription_to_all(client: &Client) -> eventstore::Result<()> {
+async fn connect_to_persistent_subscription_to_all(client: &Client) -> kurrent::Result<()> {
     // #region subscribe-to-persistent-subscription-to-all
     let mut sub = client
         .subscribe_to_persistent_subscription_to_all("subscription-group", &Default::default())
@@ -50,7 +50,7 @@ async fn connect_to_persistent_subscription_to_all(client: &Client) -> eventstor
     // #endregion subscribe-to-persistent-subscription-to-all
 }
 
-async fn create_persistent_subscription_to_all(client: &Client) -> eventstore::Result<()> {
+async fn create_persistent_subscription_to_all(client: &Client) -> kurrent::Result<()> {
     // #region create-persistent-subscription-to-all
     let options = PersistentSubscriptionToAllOptions::default()
         .filter(SubscriptionFilter::on_stream_name().add_prefix("test"));
@@ -64,7 +64,7 @@ async fn create_persistent_subscription_to_all(client: &Client) -> eventstore::R
 
 async fn connect_to_persistent_subscription_with_manual_acks(
     client: &Client,
-) -> eventstore::Result<()> {
+) -> kurrent::Result<()> {
     // #region subscribe-to-persistent-subscription-with-manual-acks
     let mut sub = client
         .subscribe_to_persistent_subscription(
@@ -82,7 +82,7 @@ async fn connect_to_persistent_subscription_with_manual_acks(
     // #endregion subscribe-to-persistent-subscription-with-manual-acks
 }
 
-async fn update_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn update_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     // #region update-persistent-subscription
     let options = PersistentSubscriptionOptions::default()
         .resolve_link_tos(true)
@@ -96,7 +96,7 @@ async fn update_persistent_subscription(client: &Client) -> eventstore::Result<(
     Ok(())
 }
 
-async fn delete_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn delete_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     // #region delete-persistent-subscription
     client
         .delete_persistent_subscription("test-stream", "subscription-group", &Default::default())
@@ -106,7 +106,7 @@ async fn delete_persistent_subscription(client: &Client) -> eventstore::Result<(
     Ok(())
 }
 
-async fn get_persistent_subscription_to_stream_info(client: &Client) -> eventstore::Result<()> {
+async fn get_persistent_subscription_to_stream_info(client: &Client) -> kurrent::Result<()> {
     // #region get-persistent-subscription-to-stream-info
     let info = client
         .get_persistent_subscription_info("test-stream", "subscription-group", &Default::default())
@@ -120,7 +120,7 @@ async fn get_persistent_subscription_to_stream_info(client: &Client) -> eventsto
     Ok(())
 }
 
-async fn get_persistent_subscription_to_all_info(client: &Client) -> eventstore::Result<()> {
+async fn get_persistent_subscription_to_all_info(client: &Client) -> kurrent::Result<()> {
     // #region get-persistent-subscription-to-all-info
     let info = client
         .get_persistent_subscription_info_to_all("subscription-group", &Default::default())
@@ -134,7 +134,7 @@ async fn get_persistent_subscription_to_all_info(client: &Client) -> eventstore:
     Ok(())
 }
 
-async fn replay_parked_to_stream(client: &Client) -> eventstore::Result<()> {
+async fn replay_parked_to_stream(client: &Client) -> kurrent::Result<()> {
     // #region replay-parked-of-persistent-subscription-to-stream
     let options = ReplayParkedMessagesOptions::default().stop_at(10);
     client
@@ -144,7 +144,7 @@ async fn replay_parked_to_stream(client: &Client) -> eventstore::Result<()> {
     Ok(())
 }
 
-async fn replay_parked_to_all(client: &Client) -> eventstore::Result<()> {
+async fn replay_parked_to_all(client: &Client) -> kurrent::Result<()> {
     // #region replay-parked-of-persistent-subscription-to-all
     let options = ReplayParkedMessagesOptions::default().stop_at(10);
     client
@@ -154,7 +154,7 @@ async fn replay_parked_to_all(client: &Client) -> eventstore::Result<()> {
     Ok(())
 }
 
-async fn list_persistent_subscription_to_stream(client: &Client) -> eventstore::Result<()> {
+async fn list_persistent_subscription_to_stream(client: &Client) -> kurrent::Result<()> {
     // #region list-persistent-subscriptions-to-stream
     let subscriptions = client
         .list_persistent_subscriptions_for_stream("test-stream", &Default::default())
@@ -170,7 +170,7 @@ async fn list_persistent_subscription_to_stream(client: &Client) -> eventstore::
     Ok(())
 }
 
-async fn list_persistent_subscription_to_all(client: &Client) -> eventstore::Result<()> {
+async fn list_persistent_subscription_to_all(client: &Client) -> kurrent::Result<()> {
     // #region list-persistent-subscriptions-to-all
     let subscriptions = client
         .list_persistent_subscriptions_to_all(&Default::default())
@@ -186,7 +186,7 @@ async fn list_persistent_subscription_to_all(client: &Client) -> eventstore::Res
     Ok(())
 }
 
-async fn list_all_persistent_subscription(client: &Client) -> eventstore::Result<()> {
+async fn list_all_persistent_subscription(client: &Client) -> kurrent::Result<()> {
     // #region list-persistent-subscriptions
     let subscriptions = client
         .list_all_persistent_subscriptions(&Default::default())
@@ -202,7 +202,7 @@ async fn list_all_persistent_subscription(client: &Client) -> eventstore::Result
     Ok(())
 }
 
-async fn restart_persistent_subscription_subsystem(client: &Client) -> eventstore::Result<()> {
+async fn restart_persistent_subscription_subsystem(client: &Client) -> kurrent::Result<()> {
     // #region restart-persistent-subscription-subsystem
     client
         .restart_persistent_subscription_subsystem(&Default::default())

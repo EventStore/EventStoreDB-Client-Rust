@@ -1,11 +1,11 @@
 [package]
-name = "eventstore-extras"
+name = "kurrent-extras"
 version = "0.1.0"
 edition = "2021"
 
 license = "MIT"
 
-description = "EventStoreDB gRPC client extra features"
+description = "KurrentDB gRPC client extra features"
 keywords = ["database", "eventsourcing", "eventstore", "eventstoredb", "grpc"]
 repository = "https://github.com/EventStore/EventStoreDB-Client-Rust"
 categories = ["database", "api-bindings"]
@@ -14,6 +14,6 @@ categories = ["database", "api-bindings"]
 
 [dependencies]
 # will move to version number once we got something stable.
-eventstore = { path = "../eventstore", version = "3.0.0" }
+kurrent = { path = "../kurrent", version = "1.0.0" }
 chrono = { version = "0.4", default-features = false }
 log = "0.4"

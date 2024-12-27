@@ -256,7 +256,7 @@ fn default_keep_alive_timeout() -> Duration {
     ClientSettings::default().keep_alive_timeout
 }
 
-/// Gathers all the settings related to a gRPC client with an EventStoreDB database.
+/// Gathers all the settings related to a gRPC client with an KurrentDB database.
 /// `ClientSettings` can only be created when parsing a connection string.
 ///
 /// ```
@@ -1164,7 +1164,10 @@ impl GrpcClient {
 
 pub(crate) fn handle_error(sender: &UnboundedSender<Msg>, connection_id: Uuid, err: &crate::Error) {
     if let crate::Error::ServerError(ref status) = err {
-        error!("Current selected EventStoreDB node gone unavailable. Starting node selection process: {}", status);
+        error!(
+            "Current selected KurrentDB node gone unavailable. Starting node selection process: {}",
+            status
+        );
 
         let _ = sender.send(Msg::CreateChannel(connection_id, None));
     } else if let crate::Error::NotLeaderException(ref leader) = err {

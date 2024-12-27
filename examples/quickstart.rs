@@ -4,7 +4,7 @@
 #![allow(unused_variables)]
 #![allow(unused_must_use)]
 
-use eventstore::{
+use kurrent::{
     AppendToStreamOptions, Client, Credentials, EventData, ExpectedRevision, ReadStreamOptions,
 };
 use serde::{Deserialize, Serialize};

@@ -3,11 +3,11 @@
 #![allow(unused_results)]
 #![allow(unused_variables)]
 
-use eventstore::{
+use futures::TryStreamExt;
+use kurrent::{
     AppendToStreamOptions, Client, Credentials, EventData, ExpectedRevision, ReadStreamOptions,
     StreamPosition,
 };
-use futures::TryStreamExt;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use uuid::Uuid;

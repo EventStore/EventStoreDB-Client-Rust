@@ -1,12 +1,12 @@
-//! Official Rust [EventStoreDB] gRPC Client.
+//! Official Rust [KurrentDB] gRPC Client.
 //!
-//! [EventStoreDB] is an open-source database built from the ground up for Event Sourcing, with Complex Event Processing in Javascript.
+//! [KurrentDB] is an open-source database built from the ground up for Event Sourcing, with Complex Event Processing in Javascript.
 //!
-//! ## EventStoreDB Server Compatibility
+//! ## KurrentDB Server Compatibility
 //! This client is compatible with version `20.6.1` upwards and works on Linux, MacOS and Windows.
 //!
 //!
-//! Server setup instructions can be found here [EventStoreDB Docs], follow the docker setup for the simplest configuration.
+//! Server setup instructions can be found here [KurrentDB Docs], follow the docker setup for the simplest configuration.
 //!
 //! # Example
 //!
@@ -30,7 +30,7 @@
 //!         is_rust_a_nice_language: true,
 //!     };
 //!
-//!     // It is not mandatory to use JSON as a data format however EventStoreDB
+//!     // It is not mandatory to use JSON as a data format however KurrentDB
 //!     // provides great additional value if you do so.
 //!     let evt = EventData::json("language-poll", &payload)?;
 //!
@@ -53,7 +53,7 @@
 //!     Ok(())
 //! }
 //! ```
-//! [EventStoreDB]: https://eventstore.com/
+//! [KurrentDB]: https://eventstore.com/
 //! [eventstoredb docs]: https://developers.eventstore.com/server/20.6/server/installation/
 #[macro_use]
 extern crate log;

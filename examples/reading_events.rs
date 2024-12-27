@@ -3,7 +3,7 @@
 #![allow(unused_results)]
 #![allow(unused_variables)]
 
-use eventstore::{
+use kurrent::{
     Client, Credentials, EventData, ExpectedRevision, Position, ReadAllOptions, ReadStreamOptions,
     StreamPosition,
 };

@@ -1,5 +1,5 @@
 use crate::common::generate_events;
-use eventstore::{Client, ProjectionClient};
+use kurrent::{Client, ProjectionClient};
 use serde::Deserialize;
 
 // This is the state of the projection, see tests/fixtures/projection.js.

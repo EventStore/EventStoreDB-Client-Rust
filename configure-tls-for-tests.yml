@@ -6,7 +6,7 @@ services:
     environment:
       PROVISION_DIRECTORIES: "1000:1000:0755:/tmp/certs"
     volumes:
-      - "./eventstore/certs:/tmp/certs"
+      - "./kurrent/certs:/tmp/certs"
     network_mode: "none"
 
   setup:
@@ -21,6 +21,6 @@ services:
       && find . -type f -print0 | xargs -0 chmod 666"
     container_name: setup
     volumes:
-      - ./eventstore/certs:/certs
+      - ./kurrent/certs:/certs
     depends_on:
       - volumes-provisioner

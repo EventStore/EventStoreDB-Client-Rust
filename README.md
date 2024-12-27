@@ -1,4 +1,4 @@
-# EventStoreDB Rust Client
+# KurrentDB Rust Client
 [![Crates.io][crates-badge]][crates-url]
 [![Crates.io][crates-download]][crates-url]
 [![Build Status][ci-badge]][ci-url]
@@ -8,20 +8,20 @@
 [crates-badge]: https://img.shields.io/crates/v/eventstore.svg
 [crates-download]: https://img.shields.io/crates/d/eventstore.svg
 [crates-url]: https://crates.io/crates/eventstore
-[ci-badge]: https://github.com/EventStore/EventStoreDB-Client-Rust/workflows/CI/badge.svg
-[ci-url]: https://github.com/EventStore/EventStoreDB-Client-Rust/actions
+[ci-badge]: https://github.com/EventStore/KurrentDB-Client-Rust/workflows/CI/badge.svg
+[ci-url]: https://github.com/EventStore/KurrentDB-Client-Rust/actions
 
 [Documentation](https://docs.rs/eventstore)
 
-Official Rust [EventStoreDB rust gRPC] gRPC Client.
+Official Rust [KurrentDB rust gRPC] gRPC Client.
 
-[EventStoreDB] is the event-native database, where business events are immutably stored and streamed. Designed for event-sourced, event-driven, and microservices architectures.
+[KurrentDB] is the event-native database, where business events are immutably stored and streamed. Designed for event-sourced, event-driven, and microservices architectures.
 
-## EventStoreDB Server Compatibility
+## KurrentDB Server Compatibility
 This client is compatible with version `20.6.1` upwards and works on Linux, MacOS and Windows.
 
 
-Server setup instructions can be found here [EventStoreDB Docs], follow the docker setup for the simplest configuration.
+Server setup instructions can be found here [KurrentDB Docs], follow the docker setup for the simplest configuration.
 
 # Example
 
@@ -45,7 +45,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         is_rust_a_nice_language: true,
     };
 
-    // It is not mandatory to use JSON as a data format however EventStoreDB
+    // It is not mandatory to use JSON as a data format however KurrentDB
     // provides great additional value if you do so.
     let evt = EventData::json("language-poll", &payload)?;
 
@@ -71,11 +71,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Support
 
-Information on support can be found here: [EventStoreDB Support]
+Information on support can be found here: [KurrentDB Support]
 
 ## Documentation
 
-Documentation for EventStoreDB can be found here: [EventStoreDB Docs]
+Documentation for KurrentDB can be found here: [KurrentDB Docs]
 
 Bear in mind that this client is not yet properly documented. We are working hard on a new version of the documentation.
 
@@ -84,8 +84,8 @@ Bear in mind that this client is not yet properly documented. We are working har
 - [Discuss](https://discuss.eventstore.com/)
 - [Discord (Event Store)](https://discord.gg/Phn9pmCw3t)
 
-[EventStoreDB]: https://eventstore.com/
-[EventStoreDB rust gRPC]: https://developers.eventstore.com/clients/grpc/getting-started?codeLanguage=Rust
+[KurrentDB]: https://eventstore.com/
+[KurrentDB rust gRPC]: https://developers.eventstore.com/clients/grpc/getting-started?codeLanguage=Rust
 [eventstoredb docs]: https://developers.eventstore.com/latest.html
 [eventstoredb discuss]: https://discuss.eventstore.com/
 [eventstoredb support]: https://eventstore.com/support/

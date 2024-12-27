@@ -131,7 +131,7 @@ impl std::fmt::Display for ExpectedRevision {
 }
 
 /// A structure referring to a potential logical record position in the
-/// EventStoreDB transaction file.
+/// KurrentDB transaction file.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Position {
     /// Commit position of the record.
@@ -689,7 +689,7 @@ impl<'de> Visitor<'de> for AclVisitor {
     type Value = Option<Acl>;
 
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(formatter, "a EventStoreDB ACL")
+        write!(formatter, "a KurrentDB ACL")
     }
 
     fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
@@ -891,7 +891,7 @@ impl<'de> Visitor<'de> for RolesVisitor {
     type Value = Option<Vec<String>>;
 
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(formatter, "a EventStoreDB role or role list")
+        write!(formatter, "a KurrentDB role or role list")
     }
 
     fn visit_none<E>(self) -> std::result::Result<Self::Value, E>
@@ -1393,7 +1393,7 @@ pub struct Endpoint {
 }
 
 #[derive(Error, Debug, Clone)]
-/// EventStoreDB command error.
+/// KurrentDB command error.
 pub enum Error {
     #[error("Server-side error: {0}")]
     ServerError(String),
@@ -1519,7 +1519,7 @@ impl Error {
 }
 
 #[derive(Error, Debug, Clone)]
-/// EventStoreDB command error.
+/// KurrentDB command error.
 pub enum GrpcConnectionError {
     #[error("Max discovery attempt count reached. count: {0}")]
     MaxDiscoveryAttemptReached(usize),

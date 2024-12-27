@@ -9,18 +9,18 @@ pub struct Statistics {
 }
 
 pub trait StatisticsExt {
-    fn parse_statistics(self) -> eventstore::Result<Statistics>;
+    fn parse_statistics(self) -> kurrent::Result<Statistics>;
 }
 
-impl StatisticsExt for eventstore::operations::RawStatistics {
-    fn parse_statistics(self) -> eventstore::Result<Statistics> {
+impl StatisticsExt for kurrent::operations::RawStatistics {
+    fn parse_statistics(self) -> kurrent::Result<Statistics> {
         let mut stats = Statistics::default();
 
         for (key, value) in self.0 {
             match key.as_str() {
                 "proc-startTime" => {
                     stats.proc.start_time = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -31,7 +31,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-id" => {
                     stats.proc.id = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -42,7 +42,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-mem" => {
                     stats.proc.mem = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -53,7 +53,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-cpu" => {
                     stats.proc.cpu = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -64,7 +64,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-threadsCount" => {
                     stats.proc.threads_count = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -75,7 +75,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-contentionsRate" => {
                     stats.proc.contentions_rate = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -86,7 +86,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-thrownExceptionsRate" => {
                     stats.proc.thrown_exceptions_rate = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -97,7 +97,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-allocationSpeed" => {
                     stats.proc.gc.allocation_speed = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -108,7 +108,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen0ItemsCount" => {
                     stats.proc.gc.gen0_items_count = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -119,7 +119,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen0Size" => {
                     stats.proc.gc.gen0_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -130,7 +130,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen1ItemsCount" => {
                     stats.proc.gc.gen1_items_count = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -141,7 +141,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen1Size" => {
                     stats.proc.gc.gen1_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -152,7 +152,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen2ItemsCount" => {
                     stats.proc.gc.gen2_items_count = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -163,7 +163,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-gen2Size" => {
                     stats.proc.gc.gen2_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -174,7 +174,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-largeHeapSize" => {
                     stats.proc.gc.large_heap_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -185,7 +185,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-timeInGc" => {
                     stats.proc.gc.time_in_gc = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -196,7 +196,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-gc-totalBytesInHeaps" => {
                     stats.proc.gc.total_bytes_in_heaps = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -207,7 +207,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-diskIo-readBytes" => {
                     stats.proc.disk_io.read_bytes = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -218,7 +218,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-diskIo-writtenBytes" => {
                     stats.proc.disk_io.written_bytes = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -229,7 +229,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-diskIo-readOps" => {
                     stats.proc.disk_io.read_ops = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -240,7 +240,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-diskIo-writeOps" => {
                     stats.proc.disk_io.write_ops = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -251,7 +251,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-connections" => {
                     stats.proc.tcp.connections = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -262,7 +262,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-receivingSpeed" => {
                     stats.proc.tcp.receiving_speed = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -273,7 +273,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-sendingSpeed" => {
                     stats.proc.tcp.sending_speed = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -284,7 +284,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-inSend" => {
                     stats.proc.tcp.in_send = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -299,7 +299,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-pendingReceived" => {
                     stats.proc.tcp.pending_received = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -310,7 +310,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-pendingSend" => {
                     stats.proc.tcp.pending_send = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -321,7 +321,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-receivedBytesSinceLastRun" => {
                     stats.proc.tcp.received_bytes_since_last_run = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -332,7 +332,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-receivedBytesTotal" => {
                     stats.proc.tcp.received_bytes_total = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -343,7 +343,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-sentBytesSinceLastRun" => {
                     stats.proc.tcp.sent_bytes_since_last_run = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -354,7 +354,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "proc-tcp-sentBytesTotal" => {
                     stats.proc.tcp.sent_bytes_total = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -365,7 +365,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "sys-loadavg-1m" => {
                     stats.sys.loadavg.one_m = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -376,7 +376,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "sys-loadavg-5m" => {
                     stats.sys.loadavg.five_m = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -387,7 +387,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "sys-loadavg-15m" => {
                     stats.sys.loadavg.fifteen_m = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -415,7 +415,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
                             IntErrorKind::PosOverflow => {
                                 // In case the number is too big for a signed number, we try unsigned.
                                 stats.sys.free_mem = value.parse().map_err(|e| {
-                                    eventstore::Error::InternalParsingError(format!(
+                                    kurrent::Error::InternalParsingError(format!(
                                         "{key}: {err} = '{value}'",
                                         key = key,
                                         err = e,
@@ -425,7 +425,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
                             }
 
                             _ => {
-                                return Err(eventstore::Error::InternalParsingError(format!(
+                                return Err(kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -438,7 +438,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-checksum" => {
                     stats.es.checksum = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -449,7 +449,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-checksumNonFlushed" => {
                     stats.es.checksum_non_flushed = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -478,7 +478,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
                     match prop {
                         "availableBytes" => {
                             drive.stats.available_bytes = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -489,7 +489,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "totalBytes" => {
                             drive.stats.total_bytes = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -504,7 +504,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "usedBytes" => {
                             drive.stats.used_bytes = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -539,7 +539,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "avgItemsPerSecond" => {
                             queue.avg_items_per_second = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -550,7 +550,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "avgProcessingTime" => {
                             queue.avg_processing_time = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -565,7 +565,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
                             }
 
                             queue.current_idle_time = Some(value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -581,7 +581,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                             queue.current_item_processing_time =
                                 Some(value.parse().map_err(|e| {
-                                    eventstore::Error::InternalParsingError(format!(
+                                    kurrent::Error::InternalParsingError(format!(
                                         "{key}: {err} = '{value}'",
                                         key = key,
                                         err = e,
@@ -592,7 +592,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "idleTimePercent" => {
                             queue.idle_time_percent = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -603,7 +603,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "length" => {
                             queue.length = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -614,7 +614,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "lengthCurrentTryPeak" => {
                             queue.length_current_try_peak = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -625,7 +625,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "lengthLifetimePeak" => {
                             queue.length_lifetime_peak = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -636,7 +636,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                         "totalItemsProcessed" => {
                             queue.total_items_processed = value.parse().map_err(|e| {
-                                eventstore::Error::InternalParsingError(format!(
+                                kurrent::Error::InternalParsingError(format!(
                                     "{key}: {err} = '{value}'",
                                     key = key,
                                     err = e,
@@ -661,7 +661,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-lastFlushSize" => {
                     stats.es.writer.last_flush_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -672,7 +672,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-lastFlushDelayMs" => {
                     stats.es.writer.last_flush_delays_ms = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -683,7 +683,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-meanFlushSize" => {
                     stats.es.writer.mean_flush_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -694,7 +694,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-meanFlushDelayMs" => {
                     stats.es.writer.mean_flush_delays_ms = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -705,7 +705,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-maxFlushSize" => {
                     stats.es.writer.max_flush_size = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -716,7 +716,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-maxFlushDelayMs" => {
                     stats.es.writer.max_flush_delays_ms = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -727,7 +727,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-writer-queuedFlushMessages" => {
                     stats.es.writer.queued_flush_messages = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -738,7 +738,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-cachedRecord" => {
                     stats.es.read_index.cached_record = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -749,7 +749,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-notCachedRecord" => {
                     stats.es.read_index.not_cached_record = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -760,7 +760,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-cachedStreamInfo" => {
                     stats.es.read_index.cached_stream_info = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -771,7 +771,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-notCachedStreamInfo" => {
                     stats.es.read_index.not_cached_stream_info = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -782,7 +782,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-cachedTransInfo" => {
                     stats.es.read_index.cached_trans_info = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
@@ -793,7 +793,7 @@ impl StatisticsExt for eventstore::operations::RawStatistics {
 
                 "es-readIndex-notCachedTransInfo" => {
                     stats.es.read_index.not_cached_trans_info = value.parse().map_err(|e| {
-                        eventstore::Error::InternalParsingError(format!(
+                        kurrent::Error::InternalParsingError(format!(
                             "{key}: {err} = '{value}'",
                             key = key,
                             err = e,
