@@ -19,3 +19,6 @@ cached_cargo/
 
 # Jetbrains IDEs files
 .idea/
+
+# Macos files
+.DS_Store
