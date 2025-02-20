@@ -163,10 +163,6 @@ impl Default for EventStoreDB {
         let container = option_env!("ESDB_DOCKER_CONTAINER").unwrap_or(DEFAULT_CONTAINER);
         let mut env_vars = HashMap::new();
 
-        env_vars.insert(
-            "EVENTSTORE_GOSSIP_ON_SINGLE_NODE".to_string(),
-            "true".to_string(),
-        );
         EventStoreDB {
             name: format!("{}/{}/{}", registry, repo, container),
             tag: tag.to_string(),
