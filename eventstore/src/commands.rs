@@ -15,7 +15,7 @@ use streams::streams_client::StreamsClient;
 use crate::batch::BatchAppendClient;
 use crate::event_store::client::{self, persistent, streams};
 use crate::event_store::generated::common::StreamIdentifier;
-use crate::grpc::{handle_error, GrpcClient, Handle, HyperClient, Msg};
+use crate::grpc::{GrpcClient, Handle, HyperClient, Msg, handle_error};
 use crate::options::append_to_stream::AppendToStreamOptions;
 use crate::options::batch_append::BatchAppendOptions;
 use crate::options::persistent_subscription::PersistentSubscriptionOptions;
@@ -84,8 +84,8 @@ pub fn filter_into_proto(filter: SubscriptionFilter) -> streams::read_req::optio
 pub fn ps_create_filter_into_proto(
     filter: &SubscriptionFilter,
 ) -> persistent::create_req::all_options::FilterOptions {
-    use persistent::create_req::all_options::filter_options::{Expression, Filter, Window};
     use persistent::create_req::all_options::FilterOptions;
+    use persistent::create_req::all_options::filter_options::{Expression, Filter, Window};
 
     let window = match filter.max {
         Some(max) => Window::Max(max),
@@ -144,8 +144,8 @@ pub async fn append_to_stream(
     options: &AppendToStreamOptions,
     events: impl Iterator<Item = EventData> + Send + 'static,
 ) -> crate::Result<WriteResult> {
-    use streams::append_req::{self, Content};
     use streams::AppendReq;
+    use streams::append_req::{self, Content};
 
     let stream_identifier = Some(StreamIdentifier {
         stream_name: stream.into_stream_name(),
@@ -192,15 +192,15 @@ pub async fn batch_append(
     options: &BatchAppendOptions,
 ) -> crate::Result<BatchAppendClient> {
     use streams::{
+        BatchAppendReq,
         batch_append_req::{
-            options::{DeadlineOption, ExpectedStreamPosition},
             Options, ProposedMessage,
+            options::{DeadlineOption, ExpectedStreamPosition},
         },
         batch_append_resp::{
             self,
             success::{CurrentRevisionOption, PositionOption},
         },
-        BatchAppendReq,
     };
 
     let connection = connection.clone();
@@ -403,10 +403,10 @@ impl ReadStream {
                     if let Some(resp) = resp {
                         match resp.content.unwrap() {
                             streams::read_resp::Content::StreamNotFound(_) => {
-                                return Err(crate::Error::ResourceNotFound)
+                                return Err(crate::Error::ResourceNotFound);
                             }
                             streams::read_resp::Content::Event(event) => {
-                                return Ok(Some(ReadEvent::Event(event.into())))
+                                return Ok(Some(ReadEvent::Event(event.into())));
                             }
 
                             streams::read_resp::Content::FirstStreamPosition(event_number) => {
@@ -451,9 +451,9 @@ pub async fn read_stream(
     stream: impl StreamName,
     count: u64,
 ) -> crate::Result<ReadStream> {
+    use streams::read_req::Options;
     use streams::read_req::options::stream_options::RevisionOption;
     use streams::read_req::options::{self, StreamOption, StreamOptions};
-    use streams::read_req::Options;
 
     let read_direction = match options.direction {
         ReadDirection::Forward => 0,
@@ -518,9 +518,9 @@ pub async fn read_all(
     options: &ReadAllOptions,
     count: u64,
 ) -> crate::Result<ReadStream> {
+    use streams::read_req::Options;
     use streams::read_req::options::all_options::AllOption;
     use streams::read_req::options::{self, AllOptions, StreamOption};
-    use streams::read_req::Options;
 
     let read_direction = match options.direction {
         ReadDirection::Forward => 0,
@@ -590,8 +590,8 @@ pub async fn delete_stream(
     stream: impl StreamName,
     options: &DeleteStreamOptions,
 ) -> crate::Result<Option<Position>> {
-    use streams::delete_req::options::ExpectedStreamRevision;
     use streams::delete_req::Options;
+    use streams::delete_req::options::ExpectedStreamRevision;
     use streams::delete_resp::PositionOption;
 
     let expected_stream_revision = match options.version {
@@ -649,8 +649,8 @@ pub async fn tombstone_stream(
     stream: impl StreamName,
     options: &TombstoneStreamOptions,
 ) -> crate::Result<Option<Position>> {
-    use streams::tombstone_req::options::ExpectedStreamRevision;
     use streams::tombstone_req::Options;
+    use streams::tombstone_req::options::ExpectedStreamRevision;
     use streams::tombstone_resp::PositionOption;
 
     let expected_stream_revision = match options.version {
@@ -804,7 +804,7 @@ impl Subscription {
                                 }
 
                                 streams::read_resp::Content::Confirmation(info) => {
-                                    return Ok(SubscriptionEvent::Confirmed(info.subscription_id))
+                                    return Ok(SubscriptionEvent::Confirmed(info.subscription_id));
                                 }
 
                                 streams::read_resp::Content::Checkpoint(chk) => {
@@ -909,9 +909,9 @@ pub fn subscribe_to_stream(
     stream_id: impl StreamName,
     options: &SubscribeToStreamOptions,
 ) -> Subscription {
+    use streams::read_req::Options;
     use streams::read_req::options::stream_options::RevisionOption;
     use streams::read_req::options::{self, StreamOption, StreamOptions, SubscriptionOptions};
-    use streams::read_req::Options;
 
     let retry = options.retry.as_ref().cloned();
     let read_direction = 0; // <- Going forward.
@@ -952,9 +952,9 @@ pub fn subscribe_to_stream(
 }
 
 pub fn subscribe_to_all(connection: GrpcClient, options: &SubscribeToAllOptions) -> Subscription {
+    use streams::read_req::Options;
     use streams::read_req::options::all_options::AllOption;
     use streams::read_req::options::{self, AllOptions, StreamOption, SubscriptionOptions};
-    use streams::read_req::Options;
 
     let retry = options.retry.as_ref().cloned();
     let read_direction = 0; // <- Going forward.
@@ -1028,7 +1028,7 @@ impl PsSettings for PersistentSubscriptionOptions {
         stream_identifier: StreamIdentifier,
     ) -> persistent::create_req::options::StreamOption {
         use persistent::create_req::{
-            options::StreamOption, stream_options::RevisionOption, StreamOptions,
+            StreamOptions, options::StreamOption, stream_options::RevisionOption,
         };
 
         let revision_option = match self.setts.start_from {
@@ -1048,7 +1048,7 @@ impl PsSettings for PersistentSubscriptionOptions {
         stream_identifier: StreamIdentifier,
     ) -> persistent::update_req::options::StreamOption {
         use persistent::update_req::{
-            options::StreamOption, stream_options::RevisionOption, StreamOptions,
+            StreamOptions, options::StreamOption, stream_options::RevisionOption,
         };
 
         let revision_option = match self.setts.start_from {
@@ -1076,10 +1076,9 @@ impl PsSettings for PersistentSubscriptionToAllOptions {
         _stream_identifier: StreamIdentifier,
     ) -> persistent::create_req::options::StreamOption {
         use persistent::create_req::{
-            self,
+            self, AllOptions,
             all_options::{self, AllOption},
             options::StreamOption,
-            AllOptions,
         };
 
         let filter_option = match self.filter.as_ref() {
@@ -1107,7 +1106,7 @@ impl PsSettings for PersistentSubscriptionToAllOptions {
         _stream_identifier: StreamIdentifier,
     ) -> persistent::update_req::options::StreamOption {
         use persistent::update_req::{
-            self, all_options::AllOption, options::StreamOption, AllOptions,
+            self, AllOptions, all_options::AllOption, options::StreamOption,
         };
 
         let all_option = match self.setts.start_from {
@@ -1134,8 +1133,8 @@ pub(crate) async fn create_persistent_subscription<S: AsRef<str>, Options>(
 where
     Options: PsSettings,
 {
-    use persistent::create_req::Options;
     use persistent::CreateReq;
+    use persistent::create_req::Options;
 
     let handle = connection.current_selected_node().await?;
     let settings = options.settings().try_into()?;
@@ -1188,8 +1187,8 @@ pub(crate) async fn update_persistent_subscription<S: AsRef<str>, Options>(
 where
     Options: PsSettings,
 {
-    use persistent::update_req::Options;
     use persistent::UpdateReq;
+    use persistent::update_req::Options;
 
     let handle = connection.current_selected_node().await?;
     let settings = options.settings().try_into()?;
@@ -1239,7 +1238,7 @@ pub async fn delete_persistent_subscription<S: AsRef<str>>(
     options: &DeletePersistentSubscriptionOptions,
     to_all: bool,
 ) -> crate::Result<()> {
-    use persistent::delete_req::{options::StreamOption, Options};
+    use persistent::delete_req::{Options, options::StreamOption};
 
     let handle = connection.current_selected_node().await?;
 
@@ -1289,9 +1288,9 @@ pub async fn subscribe_to_persistent_subscription<S: AsRef<str>>(
     options: &SubscribeToPersistentSubscriptionOptions,
     to_all: bool,
 ) -> crate::Result<PersistentSubscription> {
-    use persistent::read_req::options::{self, UuidOption};
-    use persistent::read_req::{self, options::StreamOption, Options};
     use persistent::ReadReq;
+    use persistent::read_req::options::{self, UuidOption};
+    use persistent::read_req::{self, Options, options::StreamOption};
 
     let handle = connection.current_selected_node().await?;
 
@@ -1407,8 +1406,8 @@ impl PersistentSubscription {
     where
         I: IntoIterator<Item = uuid::Uuid>,
     {
-        use persistent::read_req::{Ack, Content};
         use persistent::ReadReq;
+        use persistent::read_req::{Ack, Content};
 
         let ids = event_ids.into_iter().map(|id| id.into()).collect();
         let ack = Ack {
@@ -1447,8 +1446,8 @@ impl PersistentSubscription {
     where
         I: IntoIterator<Item = uuid::Uuid>,
     {
-        use persistent::read_req::{Content, Nack};
         use persistent::ReadReq;
+        use persistent::read_req::{Content, Nack};
 
         let ids = event_ids.into_iter().map(|id| id.into()).collect();
 
@@ -1637,7 +1636,7 @@ async fn internal_list_persistent_subscriptions<Selector>(
 where
     Selector: StreamPositionTypeSelector,
 {
-    use crate::event_store::generated::persistent::{list_req, ListReq};
+    use crate::event_store::generated::persistent::{ListReq, list_req};
 
     let options = list_req::Options {
         list_option: Some(list_option),
@@ -1682,7 +1681,7 @@ pub(crate) async fn replay_parked_messages<StreamName>(
 where
     StreamName: StreamKind,
 {
-    use crate::event_store::generated::persistent::{replay_parked_req, ReplayParkedReq};
+    use crate::event_store::generated::persistent::{ReplayParkedReq, replay_parked_req};
 
     let handle = connection.current_selected_node().await?;
 
@@ -1751,7 +1750,7 @@ pub(crate) async fn get_persistent_subscription_info<StreamName>(
 where
     StreamName: StreamKind + StreamPositionTypeSelector,
 {
-    use crate::event_store::generated::persistent::{get_info_req, GetInfoReq};
+    use crate::event_store::generated::persistent::{GetInfoReq, get_info_req};
     let handle = connection.current_selected_node().await?;
 
     if !handle.supports_feature(Features::PERSISTENT_SUBSCRIPTION_MANAGEMENT) {

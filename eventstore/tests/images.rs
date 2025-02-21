@@ -2,8 +2,8 @@
 
 use std::{borrow::Cow, collections::HashMap};
 use testcontainers::{
-    core::{ContainerPort, Mount, WaitFor},
     Image,
+    core::{ContainerPort, Mount, WaitFor},
 };
 
 const DEFAULT_REGISTRY: &str = "docker.io";
@@ -119,7 +119,9 @@ impl EventStoreDB {
             }
 
             if !tmp.as_path().exists() {
-                panic!("certificates directory is not configured properly, please run 'docker-compose --file configure-tls-for-tests.yml up'");
+                panic!(
+                    "certificates directory is not configured properly, please run 'docker-compose --file configure-tls-for-tests.yml up'"
+                );
             }
         }
 

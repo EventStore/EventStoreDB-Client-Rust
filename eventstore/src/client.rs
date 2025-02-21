@@ -7,17 +7,17 @@ use crate::options::read_stream::ReadStreamOptions;
 use crate::options::subscribe_to_stream::SubscribeToStreamOptions;
 use crate::server_features::ServerInfo;
 use crate::{
-    commands, DeletePersistentSubscriptionOptions, DeleteStreamOptions,
-    GetPersistentSubscriptionInfoOptions, ListPersistentSubscriptionsOptions, MetadataStreamName,
-    PersistentSubscription, PersistentSubscriptionInfo, PersistentSubscriptionToAllOptions,
-    Position, ReadStream, ReplayParkedMessagesOptions, RestartPersistentSubscriptionSubsystem,
-    RevisionOrPosition, StreamMetadata, StreamMetadataResult, StreamName, SubscribeToAllOptions,
+    DeletePersistentSubscriptionOptions, DeleteStreamOptions, GetPersistentSubscriptionInfoOptions,
+    ListPersistentSubscriptionsOptions, MetadataStreamName, PersistentSubscription,
+    PersistentSubscriptionInfo, PersistentSubscriptionToAllOptions, Position, ReadStream,
+    ReplayParkedMessagesOptions, RestartPersistentSubscriptionSubsystem, RevisionOrPosition,
+    StreamMetadata, StreamMetadataResult, StreamName, SubscribeToAllOptions,
     SubscribeToPersistentSubscriptionOptions, Subscription, TombstoneStreamOptions,
-    VersionedMetadata, WriteResult,
+    VersionedMetadata, WriteResult, commands,
 };
 use crate::{
-    options::append_to_stream::{AppendToStreamOptions, ToEvents},
     EventData,
+    options::append_to_stream::{AppendToStreamOptions, ToEvents},
 };
 
 /// Represents a client to a single node. `Client` maintains a full duplex

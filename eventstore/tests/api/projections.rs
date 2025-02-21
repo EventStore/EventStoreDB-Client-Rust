@@ -172,7 +172,9 @@ async fn delete_projection(
     .await;
 
     if result.is_err() {
-        warn!("projection deletion didn't complete under test timeout. Not a big deal considering https://github.com/EventStore/EventStore/issues/2938");
+        warn!(
+            "projection deletion didn't complete under test timeout. Not a big deal considering https://github.com/EventStore/EventStore/issues/2938"
+        );
     }
 
     Ok(())

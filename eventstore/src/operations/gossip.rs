@@ -3,7 +3,7 @@ use crate::grpc::HyperClient;
 use crate::http::http_configure_auth;
 use crate::request::build_request_metadata;
 use crate::types::Endpoint;
-use crate::{grpc, ClientSettings};
+use crate::{ClientSettings, grpc};
 use serde::{Deserialize, Serialize};
 use tonic::{Request, Status};
 use uuid::Uuid;

@@ -8,7 +8,7 @@ use crate::common::{fresh_stream_id, generate_events};
 use eventstore::{Client, ClientSettings};
 use futures::channel::oneshot;
 use std::time::Duration;
-use testcontainers::{core::ContainerPort, runners::AsyncRunner, ImageExt};
+use testcontainers::{ImageExt, core::ContainerPort, runners::AsyncRunner};
 use tracing::{debug, error};
 use tracing_subscriber::EnvFilter;
 

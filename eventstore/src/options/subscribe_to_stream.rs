@@ -1,5 +1,5 @@
-use crate::options::retry::RetryOptions;
 use crate::StreamPosition;
+use crate::options::retry::RetryOptions;
 use eventstore_macros::{options, streaming};
 
 options! {

@@ -571,7 +571,10 @@ fn parse_from_url(
 
                 if value < -1 {
                     return Err(ClientSettingsParseError {
-                        message: format!("Invalid keepAliveInterval of {}. Please provide a positive integer, or -1 to disable", value),
+                        message: format!(
+                            "Invalid keepAliveInterval of {}. Please provide a positive integer, or -1 to disable",
+                            value
+                        ),
                         error: None,
                     });
                 }
@@ -598,7 +601,10 @@ fn parse_from_url(
 
                 if value < -1 {
                     return Err(ClientSettingsParseError {
-                        message: format!("Invalid keepAliveTimeout of {}. Please provide a positive integer, or -1 to disable", value),
+                        message: format!(
+                            "Invalid keepAliveTimeout of {}. Please provide a positive integer, or -1 to disable",
+                            value
+                        ),
                         error: None,
                     });
                 }
@@ -616,7 +622,10 @@ fn parse_from_url(
 
                 if value < -1 {
                     return Err(ClientSettingsParseError {
-                        message: format!("Invalid defaultDeadline of {}. Please provide a positive integer, or -1 to disable", value),
+                        message: format!(
+                            "Invalid defaultDeadline of {}. Please provide a positive integer, or -1 to disable",
+                            value
+                        ),
                         error: None,
                     });
                 }
@@ -691,7 +700,7 @@ fn parse_gossip_seed(
             return Err(ClientSettingsParseError {
                 message: format!("Invalid host part: '{}'", host),
                 error: None,
-            })
+            });
         }
     }
 
@@ -718,7 +727,7 @@ impl FromStr for ClientSettings {
                             return Err(ClientSettingsParseError {
                                 message: s.to_string(),
                                 error: Some(e),
-                            })
+                            });
                         }
 
                         Ok(url) => {
@@ -1052,7 +1061,9 @@ fn connection_state_machine(
                         continue;
                     }
 
-                    debug!("Asking for a channel but we don't have an active connection. Connecting...");
+                    debug!(
+                        "Asking for a channel but we don't have an active connection. Connecting..."
+                    );
                     match connection.next(None).await {
                         Err(e) => {
                             error!("gRPC connection error: {}", e);
@@ -1232,22 +1243,21 @@ impl GrpcClient {
 }
 
 pub(crate) fn handle_error(sender: &UnboundedSender<Msg>, connection_id: Uuid, err: &crate::Error) {
-    if let crate::Error::ServerError(ref status) = err {
-        error!("Current selected EventStoreDB node gone unavailable. Starting node selection process: {}", status);
+    if let crate::Error::ServerError(status) = err {
+        error!(
+            "Current selected EventStoreDB node gone unavailable. Starting node selection process: {}",
+            status
+        );
 
         let _ = sender.send(Msg::CreateChannel(connection_id, None));
-    } else if let crate::Error::NotLeaderException(ref leader) = err {
+    } else if let crate::Error::NotLeaderException(leader) = err {
         let _ = sender.send(Msg::CreateChannel(connection_id, Some(leader.clone())));
 
         warn!(
             "NotLeaderException found. Start reconnection process on: {:?}",
             leader
         );
-    } else if let crate::Error::Grpc {
-        ref code,
-        ref message,
-    } = err
-    {
+    } else if let crate::Error::Grpc { code, message } = err {
         debug!(
             "Operation unexpected error: code: {}, message: {}",
             code, message
@@ -1285,8 +1295,8 @@ async fn node_selection(
 
         None => {
             let mut seeds = match mode {
-                ClusterMode::Seeds(ref seeds) => seeds.clone(),
-                ClusterMode::Dns(ref dns) => vec![dns.endpoint.clone()],
+                ClusterMode::Seeds(seeds) => seeds.clone(),
+                ClusterMode::Dns(dns) => vec![dns.endpoint.clone()],
             };
 
             seeds.shuffle(rng);
@@ -1449,11 +1459,11 @@ fn determine_best_node(
 
 #[cfg(test)]
 mod node_selection_tests {
-    use rand::{rngs::SmallRng, RngCore, SeedableRng};
+    use rand::{RngCore, SeedableRng, rngs::SmallRng};
 
     use crate::{
-        operations::gossip::{MemberInfo, VNodeState},
         Endpoint, NodePreference,
+        operations::gossip::{MemberInfo, VNodeState},
     };
 
     // Make sure matching preference nodes are still sorted randomly.

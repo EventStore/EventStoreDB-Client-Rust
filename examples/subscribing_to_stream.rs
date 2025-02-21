@@ -2,7 +2,6 @@
 #![allow(unused_imports)]
 #![allow(unused_results)]
 #![allow(unused_variables)]
-#![allow(unused_variables)]
 #![allow(unreachable_code)]
 
 use eventstore::{

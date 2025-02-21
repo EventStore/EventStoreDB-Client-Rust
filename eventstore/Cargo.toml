@@ -1,6 +1,6 @@
 [package]
 authors = ["Yorick Laupa <yo.eight@gmail.com>"]
-edition = "2021"
+edition = "2024"
 name = "eventstore"
 version = "4.0.0"
 

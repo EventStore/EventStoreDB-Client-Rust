@@ -10,8 +10,8 @@ use crate::operations::gossip::VNodeState;
 use bytes::Bytes;
 use chrono::{DateTime, Utc};
 use serde::de::SeqAccess;
-use serde::{de::Visitor, ser::SerializeSeq};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{de::Visitor, ser::SerializeSeq};
 use thiserror::Error;
 use tonic::{Code, Status};
 use uuid::Uuid;
@@ -1397,7 +1397,9 @@ pub struct Endpoint {
 pub enum Error {
     #[error("Server-side error: {0}")]
     ServerError(String),
-    #[error("You tried to execute a command that requires a leader node on a follower node. New leader: ")]
+    #[error(
+        "You tried to execute a command that requires a leader node on a follower node. New leader: "
+    )]
     NotLeaderException(Endpoint),
     #[error("Connection is closed.")]
     ConnectionClosed,

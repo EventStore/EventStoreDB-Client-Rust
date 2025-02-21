@@ -4,7 +4,7 @@ use crate::options::projections::{
     CreateProjectionOptions, DeleteProjectionOptions, GenericProjectionOptions,
     GetResultProjectionOptions, GetStateProjectionOptions, UpdateProjectionOptions,
 };
-use futures::{stream::BoxStream, TryStreamExt};
+use futures::{TryStreamExt, stream::BoxStream};
 use serde::de::DeserializeOwned;
 
 #[allow(dead_code)]

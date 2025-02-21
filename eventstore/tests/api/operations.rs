@@ -255,8 +255,8 @@ async fn test_shutdown(client: &operations::Client) -> eventstore::Result<()> {
 }
 
 pub async fn tests(client: eventstore::Client) -> eyre::Result<()> {
-    let mut gen = names::Generator::default();
-    let gen = &mut gen;
+    let mut generator = names::Generator::default();
+    let generator = &mut generator;
     let client: operations::Client = client.into();
     let client = &client;
 
@@ -271,28 +271,28 @@ pub async fn tests(client: eventstore::Client) -> eyre::Result<()> {
     }
     debug!("Complete");
     debug!("Before test_create_user…");
-    test_create_user(client, gen).await?;
+    test_create_user(client, generator).await?;
     debug!("Complete");
     debug!("Before test_update_user…");
-    test_update_user(client, gen).await?;
+    test_update_user(client, generator).await?;
     debug!("Complete");
     debug!("Before test_delete_user…");
-    test_delete_user(client, gen).await?;
+    test_delete_user(client, generator).await?;
     debug!("Complete");
     debug!("Before test_enable_user…");
-    test_enable_user(client, gen).await?;
+    test_enable_user(client, generator).await?;
     debug!("Complete");
     debug!("Before test_disable_user…");
-    test_disable_user(client, gen).await?;
+    test_disable_user(client, generator).await?;
     debug!("Complete");
     debug!("Before test_user_details…");
-    test_user_details(client, gen).await?;
+    test_user_details(client, generator).await?;
     debug!("Complete");
     debug!("Before test_change_user_password…");
-    test_change_user_password(client, gen).await?;
+    test_change_user_password(client, generator).await?;
     debug!("Complete");
     debug!("Before test_reset_user_password…");
-    test_reset_user_password(client, gen).await?;
+    test_reset_user_password(client, generator).await?;
     debug!("Complete");
     debug!("Before test_merge_indexes…");
     test_merge_indexes(client).await?;
