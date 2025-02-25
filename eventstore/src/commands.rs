@@ -1378,13 +1378,12 @@ impl PersistentSubscription {
 
                 Err(e)
             }
-            Ok(resp) => {
-                if let Some(content) = resp.and_then(|r| r.content) {
-                    return Ok(content.into());
-                }
-
-                unreachable!()
-            }
+            Ok(Some(crate::event_store::client::persistent::ReadResp {
+                content: Some(content),
+            })) => Ok(content.into()),
+            Ok(_) => Err(crate::Error::IllegalStateError(
+                "Persistent subscription returned no response".to_string(),
+            )),
         }
     }
 
