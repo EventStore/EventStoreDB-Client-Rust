@@ -5,8 +5,8 @@
 
 use futures::TryStreamExt;
 use kurrentdb::{
-    AppendToStreamOptions, Client, Credentials, EventData, ExpectedRevision, ReadStreamOptions,
-    StreamPosition,
+    AppendToStreamOptions, Client, Credentials, EventData, ReadStreamOptions, StreamPosition,
+    StreamState,
 };
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -28,7 +28,7 @@ pub async fn append_to_stream(client: &Client) -> Result<()> {
     };
 
     let event = EventData::json("some-event", &data)?.id(Uuid::new_v4());
-    let options = AppendToStreamOptions::default().expected_revision(ExpectedRevision::NoStream);
+    let options = AppendToStreamOptions::default().stream_state(StreamState::NoStream);
 
     let _ = client
         .append_to_stream("some-stream", &options, event)
@@ -68,7 +68,7 @@ pub async fn append_with_no_stream(client: &Client) -> Result<()> {
     };
 
     let event = EventData::json("some-event", &data)?.id(Uuid::new_v4());
-    let options = AppendToStreamOptions::default().expected_revision(ExpectedRevision::NoStream);
+    let options = AppendToStreamOptions::default().stream_state(StreamState::NoStream);
 
     let _ = client
         .append_to_stream("same-event-stream", &options, event)
@@ -106,7 +106,7 @@ pub async fn append_with_concurrency_check(client: Client) -> Result<()> {
     };
 
     let event = EventData::json("some-event", &data)?.id(Uuid::new_v4());
-    let options = AppendToStreamOptions::default().expected_revision(ExpectedRevision::Exact(
+    let options = AppendToStreamOptions::default().stream_state(StreamState::StreamRevision(
         last_event.get_original_event().revision,
     ));
 

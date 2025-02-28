@@ -4,8 +4,8 @@
 #![allow(unused_variables)]
 
 use kurrentdb::{
-    Client, Credentials, EventData, ExpectedRevision, Position, ReadAllOptions, ReadStreamOptions,
-    StreamPosition,
+    Client, Credentials, EventData, Position, ReadAllOptions, ReadStreamOptions, StreamPosition,
+    StreamState,
 };
 use serde::{Deserialize, Serialize};
 use std::error::Error;
