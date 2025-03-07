@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- Support filter option when reading from $all stream. [EventStoreDB-Client-Rust#195](https://github.com/EventStore/EventStoreDB-Client-Rust/pull/195)
 
 ### Changed
 - Rebrand the codebase. [EventStoreDB-Client-Rust#188](https://github.com/EventStore/EventStoreDB-Client-Rust/pull/188)

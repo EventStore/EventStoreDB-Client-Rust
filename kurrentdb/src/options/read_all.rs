@@ -1,4 +1,4 @@
-use crate::{Position, ReadDirection, StreamPosition};
+use crate::{Position, ReadDirection, StreamPosition, SubscriptionFilter};
 use eventstore_macros::{options, streaming};
 
 options! {
@@ -8,6 +8,7 @@ options! {
         pub(crate) direction: ReadDirection,
         pub(crate) position: StreamPosition<Position>,
         pub(crate) resolve_link_tos: bool,
+        pub(crate) filter: Option<SubscriptionFilter>,
         pub(crate) max_count: usize,
     }
 }
@@ -18,6 +19,7 @@ impl Default for ReadAllOptions {
             direction: ReadDirection::Forward,
             position: StreamPosition::Start,
             resolve_link_tos: false,
+            filter: None,
             common_operation_options: Default::default(),
             max_count: usize::MAX,
         }
@@ -67,6 +69,14 @@ impl ReadAllOptions {
     pub fn resolve_link_tos(self) -> Self {
         Self {
             resolve_link_tos: true,
+            ..self
+        }
+    }
+
+    /// Filters events or streams based upon a predicate.
+    pub fn filter(self, filter: SubscriptionFilter) -> Self {
+        Self {
+            filter: Some(filter),
             ..self
         }
     }
