@@ -382,7 +382,7 @@ async fn test_batch_append(client: &Client) -> kurrentdb::Result<()> {
         let stream_id = fresh_stream_id("batch-append");
         let events = generate_events("batch-append-type", 3);
         let _ = batch_client
-            .append_to_stream(stream_id.as_str(), kurrentdb::ExpectedRevision::Any, events)
+            .append_to_stream(stream_id.as_str(), kurrentdb::StreamState::Any, events)
             .await?;
         let options = kurrentdb::ReadStreamOptions::default()
             .forwards()

@@ -26,8 +26,8 @@ use crate::options::{OperationKind, Options};
 use crate::request::build_request_metadata;
 use crate::server_features::Features;
 use crate::types::{
-    EventData, ExpectedRevision, PersistentSubscriptionSettings, Position, ReadDirection,
-    ResolvedEvent, StreamPosition, SubscriptionEvent, WriteResult,
+    EventData, PersistentSubscriptionSettings, Position, ReadDirection, ResolvedEvent,
+    StreamPosition, StreamState, SubscriptionEvent, WriteResult,
 };
 use crate::{
     ClientSettings, DeletePersistentSubscriptionOptions, DeleteStreamOptions,
@@ -224,10 +224,10 @@ pub async fn batch_append(
             });
 
             let expected_stream_position = match req.expected_revision {
-                ExpectedRevision::Exact(rev) => ExpectedStreamPosition::StreamPosition(rev),
-                ExpectedRevision::NoStream => ExpectedStreamPosition::NoStream(()),
-                ExpectedRevision::StreamExists => ExpectedStreamPosition::StreamExists(()),
-                ExpectedRevision::Any => ExpectedStreamPosition::Any(()),
+                StreamState::StreamRevision(rev) => ExpectedStreamPosition::StreamPosition(rev),
+                StreamState::NoStream => ExpectedStreamPosition::NoStream(()),
+                StreamState::StreamExists => ExpectedStreamPosition::StreamExists(()),
+                StreamState::Any => ExpectedStreamPosition::Any(()),
             };
 
             let expected_stream_position = Some(expected_stream_position);
@@ -302,17 +302,17 @@ pub async fn batch_append(
                             let expected_version =
                                 resp.expected_stream_position.map(|exp| match exp {
                                     batch_append_resp::ExpectedStreamPosition::Any(_) => {
-                                        crate::types::ExpectedRevision::Any
+                                        crate::types::StreamState::Any
                                     }
                                     batch_append_resp::ExpectedStreamPosition::NoStream(_) => {
-                                        crate::types::ExpectedRevision::NoStream
+                                        crate::types::StreamState::NoStream
                                     }
                                     batch_append_resp::ExpectedStreamPosition::StreamExists(_) => {
-                                        crate::types::ExpectedRevision::StreamExists
+                                        crate::types::StreamState::StreamExists
                                     }
                                     batch_append_resp::ExpectedStreamPosition::StreamPosition(
                                         rev,
-                                    ) => crate::types::ExpectedRevision::Exact(rev),
+                                    ) => crate::types::StreamState::StreamRevision(rev),
                                 });
 
                             Ok(crate::batch::BatchWriteResult::new(
@@ -595,10 +595,10 @@ pub async fn delete_stream(
     use streams::delete_resp::PositionOption;
 
     let expected_stream_revision = match options.version {
-        ExpectedRevision::Any => ExpectedStreamRevision::Any(()),
-        ExpectedRevision::NoStream => ExpectedStreamRevision::NoStream(()),
-        ExpectedRevision::StreamExists => ExpectedStreamRevision::StreamExists(()),
-        ExpectedRevision::Exact(rev) => ExpectedStreamRevision::Revision(rev),
+        StreamState::Any => ExpectedStreamRevision::Any(()),
+        StreamState::NoStream => ExpectedStreamRevision::NoStream(()),
+        StreamState::StreamExists => ExpectedStreamRevision::StreamExists(()),
+        StreamState::StreamRevision(rev) => ExpectedStreamRevision::Revision(rev),
     };
 
     let expected_stream_revision = Some(expected_stream_revision);
@@ -653,11 +653,11 @@ pub async fn tombstone_stream(
     use streams::tombstone_req::options::ExpectedStreamRevision;
     use streams::tombstone_resp::PositionOption;
 
-    let expected_stream_revision = match options.version {
-        ExpectedRevision::Any => ExpectedStreamRevision::Any(()),
-        ExpectedRevision::NoStream => ExpectedStreamRevision::NoStream(()),
-        ExpectedRevision::StreamExists => ExpectedStreamRevision::StreamExists(()),
-        ExpectedRevision::Exact(rev) => ExpectedStreamRevision::Revision(rev),
+    let expected_stream_revision = match options.stream_state {
+        StreamState::Any => ExpectedStreamRevision::Any(()),
+        StreamState::NoStream => ExpectedStreamRevision::NoStream(()),
+        StreamState::StreamExists => ExpectedStreamRevision::StreamExists(()),
+        StreamState::StreamRevision(rev) => ExpectedStreamRevision::Revision(rev),
     };
 
     let expected_stream_revision = Some(expected_stream_revision);

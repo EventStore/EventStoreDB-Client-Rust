@@ -1,6 +1,6 @@
 use crate::event_store::client::streams::append_req::options::ExpectedStreamRevision;
 use crate::private::Sealed;
-use crate::{EventData, ExpectedRevision};
+use crate::{EventData, StreamState};
 use eventstore_macros::options;
 
 options! {
@@ -22,13 +22,13 @@ impl Default for AppendToStreamOptions {
 
 impl AppendToStreamOptions {
     /// Asks the server to check that the stream receiving the event is at
-    /// the given expected version. Default: `ExpectedVersion::Any`.
-    pub fn expected_revision(self, version: ExpectedRevision) -> Self {
+    /// the given stream state. Default: `StreamState::Any`.
+    pub fn stream_state(self, version: StreamState) -> Self {
         let version = match version {
-            ExpectedRevision::Any => ExpectedStreamRevision::Any(()),
-            ExpectedRevision::StreamExists => ExpectedStreamRevision::StreamExists(()),
-            ExpectedRevision::NoStream => ExpectedStreamRevision::NoStream(()),
-            ExpectedRevision::Exact(version) => ExpectedStreamRevision::Revision(version),
+            StreamState::Any => ExpectedStreamRevision::Any(()),
+            StreamState::StreamExists => ExpectedStreamRevision::StreamExists(()),
+            StreamState::NoStream => ExpectedStreamRevision::NoStream(()),
+            StreamState::StreamRevision(version) => ExpectedStreamRevision::Revision(version),
         };
 
         Self { version, ..self }

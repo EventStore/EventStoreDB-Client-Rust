@@ -1,4 +1,4 @@
-use crate::{EventData, ExpectedRevision, Position};
+use crate::{EventData, Position, StreamState};
 use tokio::sync::{
     mpsc::{UnboundedReceiver, UnboundedSender},
     oneshot,
@@ -16,7 +16,7 @@ pub(crate) struct Req {
     pub(crate) id: uuid::Uuid,
     pub(crate) stream_name: String,
     pub(crate) events: Vec<EventData>,
-    pub(crate) expected_revision: ExpectedRevision,
+    pub(crate) expected_revision: StreamState,
 }
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ pub struct BatchWriteResult {
     stream_name: String,
     current_revision: Option<u64>,
     current_position: Option<Position>,
-    expected_revision: Option<ExpectedRevision>,
+    stream_state: Option<StreamState>,
 }
 
 impl BatchWriteResult {
@@ -45,13 +45,13 @@ impl BatchWriteResult {
         stream_name: String,
         current_revision: Option<u64>,
         current_position: Option<Position>,
-        expected_revision: Option<ExpectedRevision>,
+        stream_state: Option<StreamState>,
     ) -> Self {
         Self {
             stream_name,
             current_position,
             current_revision,
-            expected_revision,
+            stream_state,
         }
     }
 
@@ -67,8 +67,8 @@ impl BatchWriteResult {
         self.current_position
     }
 
-    pub fn expected_version(&self) -> Option<ExpectedRevision> {
-        self.expected_revision
+    pub fn stream_state(&self) -> Option<StreamState> {
+        self.stream_state
     }
 }
 
@@ -137,7 +137,7 @@ impl BatchAppendClient {
     pub async fn append_to_stream<S: AsRef<str>>(
         &self,
         stream_name: S,
-        expected_revision: ExpectedRevision,
+        stream_state: StreamState,
         events: Vec<EventData>,
     ) -> crate::Result<BatchWriteResult> {
         let (sender, receiver) = oneshot::channel();
@@ -145,7 +145,7 @@ impl BatchAppendClient {
             id: uuid::Uuid::new_v4(),
             stream_name: stream_name.as_ref().to_string(),
             events,
-            expected_revision,
+            expected_revision: stream_state,
         };
 
         let req = In { sender, req };
@@ -157,16 +157,12 @@ impl BatchAppendClient {
             return Err(crate::Error::ServerError(status.to_string()));
         }
 
-        match receiver.await {
-            Err(e) => {
-                error!("[receiving-end] Batch-append stream is closed: {}", e);
+        receiver.await.unwrap_or_else(|e| {
+            error!("[receiving-end] Batch-append stream is closed: {}", e);
 
-                let status = tonic::Status::cancelled("Batch-append stream has been closed");
+            let status = tonic::Status::cancelled("Batch-append stream has been closed");
 
-                Err(crate::Error::ServerError(status.to_string()))
-            }
-
-            Ok(result) => result,
-        }
+            Err(crate::Error::ServerError(status.to_string()))
+        })
     }
 }

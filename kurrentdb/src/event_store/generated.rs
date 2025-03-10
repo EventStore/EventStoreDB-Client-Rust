@@ -1,8 +1,8 @@
 use crate::{
-    CurrentRevision, EventData, ExpectedRevision, PersistentSubscriptionConnectionInfo,
-    PersistentSubscriptionEvent, PersistentSubscriptionInfo, PersistentSubscriptionMeasurements,
-    PersistentSubscriptionSettings, PersistentSubscriptionStats, Position, RecordedEvent,
-    ResolvedEvent, RevisionOrPosition, StreamPosition, SystemConsumerStrategy, WriteResult,
+    CurrentRevision, EventData, PersistentSubscriptionConnectionInfo, PersistentSubscriptionEvent,
+    PersistentSubscriptionInfo, PersistentSubscriptionMeasurements, PersistentSubscriptionSettings,
+    PersistentSubscriptionStats, Position, RecordedEvent, ResolvedEvent, RevisionOrPosition,
+    StreamPosition, StreamState, SystemConsumerStrategy, WriteResult,
 };
 use chrono::{DateTime, Utc};
 use std::ops::Add;
@@ -110,10 +110,10 @@ impl From<streams::append_resp::WrongExpectedVersion> for crate::Error {
         };
 
         let expected = match value.expected_revision_option.unwrap() {
-            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedRevision(rev) => ExpectedRevision::Exact(rev),
-            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedAny(_) => ExpectedRevision::Any,
-            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedStreamExists(_) => ExpectedRevision::StreamExists,
-            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedNoStream(_) => ExpectedRevision::NoStream,
+            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedRevision(rev) => StreamState::StreamRevision(rev),
+            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedAny(_) => StreamState::Any,
+            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedStreamExists(_) => StreamState::StreamExists,
+            streams::append_resp::wrong_expected_version::ExpectedRevisionOption::ExpectedNoStream(_) => StreamState::NoStream,
         };
 
         crate::Error::WrongExpectedVersion { current, expected }

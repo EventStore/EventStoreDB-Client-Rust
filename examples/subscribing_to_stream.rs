@@ -6,7 +6,7 @@
 
 use futures::TryStreamExt;
 use kurrentdb::{
-    Client, Credentials, EventData, ExpectedRevision, Position, RetryOptions, StreamPosition,
+    Client, Credentials, EventData, Position, RetryOptions, StreamPosition, StreamState,
     SubscribeToAllOptions, SubscribeToStreamOptions, SubscriptionEvent, SubscriptionFilter,
 };
 use serde::{Deserialize, Serialize};

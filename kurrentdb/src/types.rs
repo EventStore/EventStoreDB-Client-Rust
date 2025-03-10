@@ -100,14 +100,14 @@ where
 
 /// Constants used for expected version control.
 /// The use of expected version can be a bit tricky especially when discussing
-/// assurances given by the GetEventStore server.
+/// assurances given by the KurrentDB server.
 ///
-/// The GetEventStore server will assure idempotency for all operations using
-/// any value in `ExpectedRevision` except `ExpectedRevision::Any`. When using
-/// `ExpectedRevision::Any`, the GetEventStore server will do its best to assure
+/// The KurrentDB server will assure idempotency for all operations using
+/// any value in `StreamState` except `StreamState::Any`. When using
+/// `StreamState::Any`, the KurrentDB server will do its best to assure
 /// idempotency but will not guarantee idempotency.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub enum ExpectedRevision {
+pub enum StreamState {
     /// This write should not conflict with anything and should always succeed.
     Any,
 
@@ -121,10 +121,10 @@ pub enum ExpectedRevision {
 
     /// States that the last event written to the stream should have an event
     /// number matching your expected value.
-    Exact(u64),
+    StreamRevision(u64),
 }
 
-impl std::fmt::Display for ExpectedRevision {
+impl std::fmt::Display for StreamState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }
@@ -1377,7 +1377,7 @@ impl std::fmt::Display for CurrentRevision {
 #[derive(Clone, Debug, Copy, Eq, PartialEq)]
 pub struct WrongExpectedVersion {
     pub current: CurrentRevision,
-    pub expected: ExpectedRevision,
+    pub expected: StreamState,
 }
 
 impl std::fmt::Display for WrongExpectedVersion {
@@ -1435,7 +1435,7 @@ pub enum Error {
     IllegalStateError(String),
     #[error("Wrong expected version: expected '{expected}' but got '{current}'")]
     WrongExpectedVersion {
-        expected: ExpectedRevision,
+        expected: StreamState,
         current: CurrentRevision,
     },
 }
