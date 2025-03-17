@@ -401,6 +401,181 @@ async fn test_batch_append(client: &Client) -> kurrentdb::Result<()> {
     Ok(())
 }
 
+// Tests that filtering works correctly when reading from $all stream
+async fn test_read_all_filter(client: &Client) -> kurrentdb::Result<()> {
+    // Create a unique prefix for our test events to make them identifiable
+    let unique_prefix = format!("filter-test-{}", uuid::Uuid::new_v4());
+    let stream_id_prefix = format!("filter-stream-{}", uuid::Uuid::new_v4());
+
+    // Create two streams with different names for stream name filtering tests
+    let stream_id1 = format!("{}-one", stream_id_prefix);
+    let stream_id2 = format!("{}-two", stream_id_prefix);
+    let other_stream_id = fresh_stream_id("read_all_filter_other");
+
+    // Create events with different event types
+    let filtered_type = format!("{}-include", unique_prefix);
+    let unfiltered_type = format!("{}-exclude", unique_prefix);
+
+    // Create event data directly without using serde_json::Result
+    let events_to_append1 = vec![
+        kurrentdb::EventData::json(
+            &filtered_type,
+            &serde_json::json!({"filtered": true, "index": 1}),
+        )
+        .unwrap(),
+        kurrentdb::EventData::json(
+            &unfiltered_type,
+            &serde_json::json!({"filtered": false, "index": 2}),
+        )
+        .unwrap(),
+        kurrentdb::EventData::json(
+            &filtered_type,
+            &serde_json::json!({"filtered": true, "index": 3}),
+        )
+        .unwrap(),
+    ];
+
+    // Append events to second stream
+    let events_to_append2 = vec![
+        kurrentdb::EventData::json(
+            &filtered_type,
+            &serde_json::json!({"filtered": true, "index": 4}),
+        )
+        .unwrap(),
+        kurrentdb::EventData::json(
+            &filtered_type,
+            &serde_json::json!({"filtered": true, "index": 5}),
+        )
+        .unwrap(),
+    ];
+
+    // Append to other stream (should be excluded by stream prefix filter)
+    let events_other = vec![
+        kurrentdb::EventData::json(
+            &filtered_type,
+            &serde_json::json!({"filtered": true, "index": 99}),
+        )
+        .unwrap(),
+    ];
+
+    // Append our test events
+    client
+        .append_to_stream(stream_id1.clone(), &Default::default(), events_to_append1)
+        .await?;
+    client
+        .append_to_stream(stream_id2.clone(), &Default::default(), events_to_append2)
+        .await?;
+    client
+        .append_to_stream(other_stream_id.clone(), &Default::default(), events_other)
+        .await?;
+
+    debug!(
+        "Created test streams: {}, {}, {}",
+        stream_id1, stream_id2, other_stream_id
+    );
+
+    // TEST 1: Event type prefix filtering
+    debug!("Testing event type prefix filtering");
+    let filter1 = kurrentdb::SubscriptionFilter::on_event_type().add_prefix(&filtered_type);
+    let options1 = kurrentdb::ReadAllOptions::default()
+        .filter(filter1)
+        .max_count(100);
+
+    let mut stream = client.read_all(&options1).await?;
+    let mut filtered_events = Vec::new();
+
+    while let Some(event) = stream.next().await? {
+        if event.get_original_stream_id() == stream_id1
+            || event.get_original_stream_id() == stream_id2
+        {
+            filtered_events.push(event);
+        }
+    }
+
+    // Should find exactly 4 filtered events (2 from stream_id1, 2 from stream_id2)
+    assert_eq!(
+        filtered_events.len(),
+        4,
+        "Expected exactly 4 events with filtered type"
+    );
+
+    // Verify all events have the expected type
+    for event in filtered_events {
+        assert_eq!(
+            event.get_original_event().event_type,
+            filtered_type,
+            "Event should match our filtered type"
+        );
+    }
+
+    // TEST 2: Stream name prefix filtering
+    debug!("Testing stream name prefix filtering");
+    let filter2 = kurrentdb::SubscriptionFilter::on_stream_name().add_prefix(&stream_id_prefix);
+    let options2 = kurrentdb::ReadAllOptions::default()
+        .filter(filter2)
+        .max_count(100);
+
+    let mut stream = client.read_all(&options2).await?;
+    let mut stream_filtered_events = Vec::new();
+
+    while let Some(event) = stream.next().await? {
+        stream_filtered_events.push(event);
+    }
+
+    // Should find exactly 5 events (3 from stream_id1, 2 from stream_id2)
+    assert_eq!(
+        stream_filtered_events.len(),
+        5,
+        "Expected exactly 5 events from streams with prefix"
+    );
+
+    // Verify all events are from expected streams
+    for event in &stream_filtered_events {
+        let stream_name = event.get_original_stream_id();
+        assert!(
+            stream_name == stream_id1 || stream_name == stream_id2,
+            "Event should be from one of our filtered streams"
+        );
+    }
+
+    // TEST 3: Regular expression pattern matching
+    debug!("Testing regex pattern matching");
+    let regex_filter = kurrentdb::SubscriptionFilter::on_event_type()
+        .regex(&format!("{}.*include", unique_prefix));
+    let regex_options = kurrentdb::ReadAllOptions::default()
+        .filter(regex_filter)
+        .max_count(100);
+
+    let mut stream = client.read_all(&regex_options).await?;
+    let mut regex_filtered_events = Vec::new();
+
+    while let Some(event) = stream.next().await? {
+        if event.get_original_stream_id() == stream_id1
+            || event.get_original_stream_id() == stream_id2
+        {
+            regex_filtered_events.push(event);
+        }
+    }
+
+    // Should find exactly 4 filtered events that match regex
+    assert_eq!(
+        regex_filtered_events.len(),
+        4,
+        "Expected exactly 4 events matching regex"
+    );
+
+    // Verify all events have the expected type
+    for event in regex_filtered_events {
+        assert_eq!(
+            event.get_original_event().event_type,
+            filtered_type,
+            "Event should match our filtered type via regex"
+        );
+    }
+
+    Ok(())
+}
+
 pub async fn tests(client: Client) -> eyre::Result<()> {
     let info = client.server_info().await?;
 
@@ -459,6 +634,9 @@ pub async fn tests(client: Client) -> eyre::Result<()> {
             Err(e)
         }?;
     }
+    debug!("Complete");
+    debug!("Before test_read_all_filter…");
+    test_read_all_filter(&client).await?;
     debug!("Complete");
 
     Ok(())

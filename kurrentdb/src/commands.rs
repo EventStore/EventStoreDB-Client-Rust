@@ -545,6 +545,11 @@ pub async fn read_all(
         all_option: Some(all_option),
     };
 
+    let filter_option = match &options.filter {
+        Some(filter) => options::FilterOption::Filter(filter_into_proto(filter.clone())),
+        None => options::FilterOption::NoFilter(()),
+    };
+
     let uuid_option = options::UuidOption {
         content: Some(options::uuid_option::Content::String(())),
     };
@@ -552,7 +557,7 @@ pub async fn read_all(
     let req_options = Options {
         stream_option: Some(StreamOption::All(stream_options)),
         resolve_links: options.resolve_link_tos,
-        filter_option: Some(options::FilterOption::NoFilter(())),
+        filter_option: Some(filter_option),
         count_option: Some(options::CountOption::Count(count)),
         uuid_option: Some(uuid_option),
         control_option: None,
